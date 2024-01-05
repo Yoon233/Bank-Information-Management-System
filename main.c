@@ -5,6 +5,7 @@
 #include <ctype.h>
 
 #define buffer_size 100
+#define MAX_LINE_LENGTH 100
 
 void account(void);
 void clear(void);
@@ -358,7 +359,7 @@ void transfer(void)
             printf("Is this true? : [y/n]\n");
             char YorN = 0;
             YorN = getchar();
-            if(YorN == 'n'){
+            if(YorN == 'y'){
               char updateBalance[100];
               char updateBalance2[100];
               sprintf(updateBalance,"Balance : %u", TargetBalancebuf+TransferAmount);
@@ -366,25 +367,54 @@ void transfer(void)
               clear();
               printf("------------------------------------------------\n");
 
-              FILE *fp;
-              FILE *fpTEMP;
-              FILE *fp2;
-              FILE *fpTEMP2;
-              char scanner[100];
+              
+              FILE *file = fopen(filename, "r+");  // Open the file for reading and writing
 
-              fp  = fopen(TargetAccountName, "r");
-              fpTEMP = fopen("accounts/TargetTemp.txt", "w");
-              fp2  = fopen(TargetAccountName, "r");
-              fpTEMP2 = fopen("accounts/TargetTemp.txt", "w");
-              if(fp == NULL || fp2 == NULL || fpTEMP == NULL || fpTEMP2 == NULL){
-                printf("There was error while opening file.\n");
-                exit(-1);
+              if (file == NULL) {
+                  printf("Error opening file %s\n", filename);
+                  exit(-1);
               }
 
-              while(fgets(scanner, 100, fp) != NULL){
-                fputs(scanner, fpTEMP);
-              }
-              }
+                 for (int i = 0; i < 6; i++) {
+                      char line[MAX_LINE_LENGTH];
+                      if (fgets(line, MAX_LINE_LENGTH, file) == NULL) {
+                          printf("Error reading file\n");
+                          fclose(file);
+                          exit(-1);
+                      }
+                  }
+
+                  int balance;
+                  fscanf(file, "Balance : %d", );
+
+                  // Update the balance
+                  balance += amount;
+
+                  // Move back to the beginning of the line and update the balance in the file
+                  fseek(file, -strlen("Balance : ") - 1, SEEK_CUR);
+                  fprintf(file, "%d\n", );
+
+                  fclose(file);
+              
+              // FILE *fp;
+              // FILE *fpTEMP;
+              // FILE *fp2;
+              // FILE *fpTEMP2;
+              // char scanner[100];
+
+              // // fp  = fopen(TargetAccountName, "r");
+              // // fpTEMP = fopen("accounts/TargetTemp.txt", "w");
+              // // fp2  = fopen(TargetAccountName, "r");
+              // // fpTEMP2 = fopen("accounts/TargetTemp.txt", "w");
+              // // if(fp == NULL || fp2 == NULL || fpTEMP == NULL || fpTEMP2 == NULL){
+              // //   printf("There was error while opening file.\n");
+              // //   exit(-1);
+              // // }
+
+              // // while(fgets(scanner, 100, fp) != NULL){
+              // //   fputs(scanner, fpTEMP);
+              // // }
+              // // }
 
 
 
@@ -424,9 +454,6 @@ void transfer(void)
               printf("|\tBalance of Your account : %u\t|\n",balancebuf-TransferAmount);
 
               }
-
-
-
 
           printf("------------------------------------------------\n");
           printf("[ENTER ANY KEY TO GO BACK TO MAIN]\n");
